@@ -1,18 +1,20 @@
-all: blinky.bin
+PROJ=blinky
 
-blinky.blif: blinky.v
-	yosys -p 'synth_ice40 -top top -blif blinky.blif' blinky.v
+all: $(PROJ).bin
 
-blinky.txt: blinky.blif icestick.pcf
-	arachne-pnr -d 1k -o blinky.txt -p icestick.pcf blinky.blif
+%.blif: %.v
+	yosys -p 'synth_ice40 -top top -blif $@' $<
 
-blinky.bin: blinky.txt
-	icepack blinky.txt blinky.bin
+%.txt: %.blif icestick.pcf
+	arachne-pnr -d 1k -o $@ -p icestick.pcf $<
 
-prog: blinky.bin
-	iceprog blinky.bin
+%.bin: %.txt
+	icepack $< $@
+
+prog: $(PROJ).bin
+	iceprog $<
 
 clean:
-	rm -f blinky.blif blinky.txt blinky.bin
+	rm -f *.blif *.txt *.bin
 
 .PHONY: all prog clean

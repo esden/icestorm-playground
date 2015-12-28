@@ -15,5 +15,5 @@ module top(
 	reg [4:0] PWM;
 	always @(posedge clk) PWM <= PWM[3:0]+PWM_input;
 
-	assign LED1 = PWM[4];
+	assign {LED1, LED2, LED3, LED4, LED5} = PWM[4] ? 'b10100 : 'b01011;
 endmodule
